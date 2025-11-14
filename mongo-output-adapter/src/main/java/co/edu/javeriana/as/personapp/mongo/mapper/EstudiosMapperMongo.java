@@ -3,8 +3,10 @@ package co.edu.javeriana.as.personapp.mongo.mapper;
 import java.time.LocalDate;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 
 import co.edu.javeriana.as.personapp.common.annotations.Mapper;
+import co.edu.javeriana.as.personapp.domain.Gender;
 import co.edu.javeriana.as.personapp.domain.Person;
 import co.edu.javeriana.as.personapp.domain.Profession;
 import co.edu.javeriana.as.personapp.domain.Study;
@@ -17,6 +19,7 @@ import lombok.NonNull;
 public class EstudiosMapperMongo {
 
 	@Autowired
+	@Lazy
 	private PersonaMapperMongo personaMapperMongo;
 
 	@Autowired
@@ -37,7 +40,9 @@ public class EstudiosMapperMongo {
 	}
 
 	private PersonaDocument validatePrimaryPersona(@NonNull Person person) {
-		return person != null ? personaMapperMongo.fromDomainToAdapter(person) : new PersonaDocument();
+		PersonaDocument personaDoc = person != null ? personaMapperMongo.fromDomainToAdapter(person) : new PersonaDocument();
+		personaDoc.setEstudios(null);
+		return personaDoc;
 	}
 
 	private ProfesionDocument validatePrimaryProfesion(@NonNull Profession profession) {
@@ -58,7 +63,21 @@ public class EstudiosMapperMongo {
 		study.setProfession(profesionMapperMongo.fromAdapterToDomain(estudiosDocument.getPrimaryProfesion()));
 		study.setGraduationDate(validateGraduationDate(estudiosDocument.getFecha()));
 		study.setUniversityName(validateUniversityName(estudiosDocument.getUniver()));
-		return null;
+		return study;
+	}
+
+	public Study fromAdapterToDomainBasic(EstudiosDocument estudiosDocument) {
+		return Study.builder()
+				.person(estudiosDocument.getPrimaryPersona() != null
+						? personaMapperMongo.fromAdapterToDomainBasic(estudiosDocument.getPrimaryPersona())
+						: Person.builder().identification(0).firstName("Desconocido").lastName("Desconocido")
+								.gender(Gender.OTHER).build())
+				.profession(estudiosDocument.getPrimaryProfesion() != null
+						? profesionMapperMongo.fromAdapterToDomainBasic(estudiosDocument.getPrimaryProfesion())
+						: Profession.builder().identification(0).name("Desconocido").build())
+				.graduationDate(validateGraduationDate(estudiosDocument.getFecha()))
+				.universityName(validateUniversityName(estudiosDocument.getUniver()))
+				.build();
 	}
 
 	private LocalDate validateGraduationDate(LocalDate fecha) {

@@ -19,11 +19,11 @@ public class TelefonoMapperMaria {
 		TelefonoEntity telefonoEntity = new TelefonoEntity();
 		telefonoEntity.setNum(phone.getNumber());
 		telefonoEntity.setOper(phone.getCompany());
-		telefonoEntity.setDuenio(validateDuenio(phone.getOwner()));
+		telefonoEntity.setDuenio(mapOwnerWithoutPhones(phone.getOwner()));
 		return telefonoEntity;
 	}
 
-	private PersonaEntity validateDuenio(@NonNull Person owner) {
+	private PersonaEntity mapOwnerWithoutPhones(Person owner) {
 		return owner != null ? personaMapperMaria.fromDomainToAdapter(owner) : new PersonaEntity();
 	}
 
@@ -37,5 +37,19 @@ public class TelefonoMapperMaria {
 
 	private @NonNull Person validateOwner(PersonaEntity duenio) {
 		return duenio != null ? personaMapperMaria.fromAdapterToDomain(duenio) : new Person();
+	}
+
+	public TelefonoEntity fromDomainToAdapterWithoutOwner(Phone phone) {
+		TelefonoEntity telefonoEntity = new TelefonoEntity();
+		telefonoEntity.setNum(phone.getNumber());
+		telefonoEntity.setOper(phone.getCompany());
+		return telefonoEntity;
+	}
+
+	public Phone fromAdapterToDomainWithoutOwner(TelefonoEntity telefonoEntity) {
+		Phone phone = new Phone();
+		phone.setNumber(telefonoEntity.getNum());
+		phone.setCompany(telefonoEntity.getOper());
+		return phone;
 	}
 }

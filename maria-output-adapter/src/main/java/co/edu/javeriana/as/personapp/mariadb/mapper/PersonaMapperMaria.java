@@ -48,16 +48,25 @@ public class PersonaMapperMaria {
 	private List<EstudiosEntity> validateEstudios(List<Study> studies) {
 		return studies != null && !studies.isEmpty()
 				? studies.stream().map(study -> estudiosMapperMaria.fromDomainToAdapter(study)).collect(Collectors.toList())
-				: new ArrayList<EstudiosEntity>();
+				: new ArrayList<>();
 	}
 
 	private List<TelefonoEntity> validateTelefonos(List<Phone> phoneNumbers) {
 		return phoneNumbers != null && !phoneNumbers.isEmpty() ? phoneNumbers.stream()
 				.map(phone -> telefonoMapperMaria.fromDomainToAdapter(phone)).collect(Collectors.toList())
-				: new ArrayList<TelefonoEntity>();
+				: new ArrayList<>();
+	}
+
+	private List<TelefonoEntity> mapPhonesWithoutOwnerValidation(List<Phone> phoneNumbers) {
+		return phoneNumbers != null && !phoneNumbers.isEmpty()
+				? phoneNumbers.stream().map(telefonoMapperMaria::fromDomainToAdapterWithoutOwner)
+						.collect(Collectors.toList())
+				: new ArrayList<>();
 	}
 
 	public Person fromAdapterToDomain(PersonaEntity personaEntity) {
+		if (personaEntity == null)
+			return null;
 		Person person = new Person();
 		person.setIdentification(personaEntity.getCc());
 		person.setFirstName(personaEntity.getNombre());
@@ -65,7 +74,18 @@ public class PersonaMapperMaria {
 		person.setGender(validateGender(personaEntity.getGenero()));
 		person.setAge(validateAge(personaEntity.getEdad()));
 		person.setStudies(validateStudies(personaEntity.getEstudios()));
-		person.setPhoneNumbers(validatePhones(personaEntity.getTelefonos()));
+		person.setPhoneNumbers(mapPhonesWithoutOwner(personaEntity.getTelefonos()));
+		return person;
+	}
+
+	public Person fromAdapterToDomainBasic(PersonaEntity personaEntity) {
+		if (personaEntity == null)
+			return null;
+		Person person = new Person();
+		person.setIdentification(personaEntity.getCc());
+		person.setFirstName(personaEntity.getNombre());
+		person.setLastName(personaEntity.getApellido());
+		person.setGender(Gender.OTHER);
 		return person;
 	}
 
@@ -80,12 +100,13 @@ public class PersonaMapperMaria {
 	private List<Study> validateStudies(List<EstudiosEntity> estudiosEntity) {
 		return estudiosEntity != null && !estudiosEntity.isEmpty() ? estudiosEntity.stream()
 				.map(estudio -> estudiosMapperMaria.fromAdapterToDomain(estudio)).collect(Collectors.toList())
-				: new ArrayList<Study>();
+				: new ArrayList<>();
 	}
 
-	private List<Phone> validatePhones(List<TelefonoEntity> telefonoEntities) {
-		return telefonoEntities != null && !telefonoEntities.isEmpty() ? telefonoEntities.stream()
-				.map(telefono -> telefonoMapperMaria.fromAdapterToDomain(telefono)).collect(Collectors.toList())
-				: new ArrayList<Phone>();
+	private List<Phone> mapPhonesWithoutOwner(List<TelefonoEntity> telefonoEntities) {
+		return telefonoEntities != null && !telefonoEntities.isEmpty()
+				? telefonoEntities.stream().map(telefonoMapperMaria::fromAdapterToDomainWithoutOwner)
+						.collect(Collectors.toList())
+				: new ArrayList<>();
 	}
 }

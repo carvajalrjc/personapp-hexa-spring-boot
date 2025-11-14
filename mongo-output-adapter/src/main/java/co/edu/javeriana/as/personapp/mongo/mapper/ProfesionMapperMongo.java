@@ -34,7 +34,7 @@ public class ProfesionMapperMongo {
 	private List<EstudiosDocument> validateEstudios(List<Study> studies) {
 		return studies != null && !studies.isEmpty() ? studies.stream()
 				.map(study -> estudiosMapperMongo.fromDomainToAdapter(study)).collect(Collectors.toList())
-				: new ArrayList<EstudiosDocument>();
+				: new ArrayList<>();
 	}
 
 	public Profession fromAdapterToDomain(ProfesionDocument profesionDocument) {
@@ -46,13 +46,22 @@ public class ProfesionMapperMongo {
 		return profession;
 	}
 
+	public Profession fromAdapterToDomainBasic(ProfesionDocument profesionDocument) {
+		return Profession.builder()
+				.identification(profesionDocument.getId() != null ? profesionDocument.getId() : 0)
+				.name(profesionDocument.getNom() != null ? profesionDocument.getNom() : "Desconocido")
+				.description(profesionDocument.getDes() != null ? profesionDocument.getDes() : "")
+				// No cargar 'studies' para evitar referencias cíclicas
+				.build();
+	}
+
 	private String validateDescription(String des) {
 		return des != null ? des : "";
 	}
 
 	private List<Study> validateStudies(List<EstudiosDocument> estudiosDocument) {
 		return estudiosDocument != null && !estudiosDocument.isEmpty() ? estudiosDocument.stream()
-				.map(estudio -> estudiosMapperMongo.fromAdapterToDomain(estudio)).collect(Collectors.toList())
-				: new ArrayList<Study>();
+				.map(estudiosMapperMongo::fromAdapterToDomainBasic).collect(Collectors.toList())
+				: new ArrayList<>();
 	}
 }
