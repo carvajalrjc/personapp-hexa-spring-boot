@@ -1,5 +1,4 @@
-INSERT INTO 
-	`persona_db`.`persona`(`cc`,`nombre`,`apellido`,`genero`,`edad`) 
+INSERT INTO `persona_db`.`persona`(`cc`,`nombre`,`apellido`,`genero`,`edad`) 
 VALUES
 	(123456789,'Pepe','Perez','M',30),
 	(987654321,'Pepito','Perez','M',null),

@@ -20,10 +20,8 @@ public class EstudioMapperCli {
 	public EstudioModelCli fromDomainToCli(Study study) {
 		if (study != null) {
 			return EstudioModelCli.builder()
-					.person(personaMapperCli.fromBasicModelCliToDomain(
-							personaMapperCli.fromDomainToBasicModelCli(study.getPerson())))
-					.profession(profesionMapperCli.fromBasicModelCliToDomain(
-							profesionMapperCli.fromDomainToBasicModelCli(study.getProfession())))
+					.person(study.getPerson())
+					.profession(study.getProfession())
 					.graduationDate(study.getGraduationDate())
 					.universityName(study.getUniversityName())
 					.build();
@@ -33,17 +31,9 @@ public class EstudioMapperCli {
 
 	public Study fromCliToDomain(EstudioModelCli estudioModelCli) {
 		if (estudioModelCli != null) {
-			Person person = estudioModelCli.getPerson() != null
-					? personaMapperCli.fromBasicModelCliToDomain(
-							personaMapperCli.fromDomainToBasicModelCli(estudioModelCli.getPerson()))
-					: null;
-			Profession profession = estudioModelCli.getProfession() != null
-					? profesionMapperCli.fromBasicModelCliToDomain(
-							profesionMapperCli.fromDomainToBasicModelCli(estudioModelCli.getProfession()))
-					: null;
 			return Study.builder()
-					.person(person)
-					.profession(profession)
+					.person(estudioModelCli.getPerson())
+					.profession(estudioModelCli.getProfession())
 					.graduationDate(estudioModelCli.getGraduationDate())
 					.universityName(estudioModelCli.getUniversityName())
 					.build();
