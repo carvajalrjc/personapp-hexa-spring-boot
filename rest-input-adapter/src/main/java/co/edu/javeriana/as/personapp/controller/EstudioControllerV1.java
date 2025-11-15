@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -42,8 +41,8 @@ public class EstudioControllerV1 {
 	}
 
 	@ResponseBody
-	@PostMapping(path = "", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<?> crearEstudio(@RequestBody EstudioRequest request, @RequestParam String database) {
+	@PostMapping(path = "/{database}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<?> crearEstudio(@PathVariable String database, @RequestBody EstudioRequest request) {
 		log.info("Creating a new study in database: {}", database);
 		return estudioInputAdapterRest.crearEstudio(request, database.toUpperCase());
 	}

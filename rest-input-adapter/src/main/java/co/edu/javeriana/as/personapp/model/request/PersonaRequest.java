@@ -13,5 +13,4 @@ public class PersonaRequest {
 	private String lastName;
 	private String age;
 	private String sex;
-	private String database;
 }
