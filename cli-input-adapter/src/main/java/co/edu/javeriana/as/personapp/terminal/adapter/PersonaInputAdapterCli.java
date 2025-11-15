@@ -1,8 +1,5 @@
 package co.edu.javeriana.as.personapp.terminal.adapter;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
@@ -43,17 +40,56 @@ public class PersonaInputAdapterCli {
 		}
 	}
 
-	public void historial1() {
-		log.info("Into historial PersonaEntity in Input Adapter");
-		List<PersonaModelCli> persona = personInputPort.findAll().stream().map(personaMapperCli::fromDomainToAdapterCli)
-					.collect(Collectors.toList());
-		persona.forEach(p -> System.out.println(p.toString()));
-	}
 	public void historial() {
 	    log.info("Into historial PersonaEntity in Input Adapter");
 	    personInputPort.findAll().stream()
 	        .map(personaMapperCli::fromDomainToAdapterCli)
 	        .forEach(System.out::println);
+	}
+
+	public void create(int cc, String nombre, String apellido, String genero, int edad) {
+		try {
+			personInputPort.create(personaMapperCli.fromCliToDomain(cc, nombre, apellido, genero, edad));
+			System.out.println("Persona creada exitosamente.");
+		} catch (Exception e) {
+			log.warn("Error al crear persona: " + e.getMessage());
+		}
+	}
+
+	public void findOne(int cc) {
+		try {
+			PersonaModelCli persona = personaMapperCli.fromDomainToAdapterCli(personInputPort.findOne(cc));
+			System.out.println(persona);
+		} catch (Exception e) {
+			log.warn("Error al buscar persona: " + e.getMessage());
+		}
+	}
+
+	public void edit(int cc, String nombre, String apellido, String genero, int edad) {
+		try {
+			personInputPort.edit(cc, personaMapperCli.fromCliToDomain(cc, nombre, apellido, genero, edad));
+			System.out.println("Persona actualizada exitosamente.");
+		} catch (Exception e) {
+			log.warn("Error al actualizar persona: " + e.getMessage());
+		}
+	}
+
+	public void drop(int cc) {
+		try {
+			personInputPort.drop(cc);
+			System.out.println("Persona eliminada exitosamente.");
+		} catch (Exception e) {
+			log.warn("Error al eliminar persona: " + e.getMessage());
+		}
+	}
+
+	public void count() {
+		try {
+			int count = personInputPort.count();
+			System.out.println("Total de personas: " + count);
+		} catch (Exception e) {
+			log.warn("Error al contar personas: " + e.getMessage());
+		}
 	}
 
 }

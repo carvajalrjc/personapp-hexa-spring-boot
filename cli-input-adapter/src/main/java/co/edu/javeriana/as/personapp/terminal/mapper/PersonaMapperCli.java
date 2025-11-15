@@ -41,6 +41,16 @@ public class PersonaMapperCli {
 		return null;
 	}
 
+	public Person fromCliToDomain(int cc, String nombre, String apellido, String genero, int edad) {
+		return Person.builder()
+				.identification(cc)
+				.firstName(nombre)
+				.lastName(apellido)
+				.gender(parseGender(genero))
+				.age(edad)
+				.build();
+	}
+
 	private Gender parseGender(String genero) {
 		if (genero == null || genero.trim().isEmpty()) {
 			return Gender.OTHER;
