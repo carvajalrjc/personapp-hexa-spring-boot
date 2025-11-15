@@ -70,11 +70,15 @@ public class PersonaInputAdapterRest {
 		}
 	}
 
-	public PersonaResponse crearPersona(PersonaRequest request) {
+	public PersonaResponse crearPersona(String database, PersonaRequest request) {
 		try {
-			setPersonOutputPortInjection(request.getDatabase());
+			String db = setPersonOutputPortInjection(database);
 			Person person = personInputPort.create(personaMapperRest.fromAdapterToDomain(request));
-			return personaMapperRest.fromDomainToAdapterRestMaria(person);
+			if(db.equalsIgnoreCase(DatabaseOption.MARIA.toString())){
+				return personaMapperRest.fromDomainToAdapterRestMaria(person);
+			}else {
+				return personaMapperRest.fromDomainToAdapterRestMongo(person);
+			}
 		} catch (InvalidOptionException e) {
 			log.warn(e.getMessage());
 			//return new PersonaResponse("", "", "", "", "", "", "");
@@ -84,9 +88,13 @@ public class PersonaInputAdapterRest {
 
 	public ResponseEntity<?> obtenerPersona(String database, int cc) throws NoExistException {
 		try {
-			setPersonOutputPortInjection(database);
+			String dbOption = setPersonOutputPortInjection(database);
 			Person person = personInputPort.findOne(cc);
-			return ResponseEntity.ok(personaMapperRest.fromDomainToAdapterRestMaria(person));
+			if (dbOption.equalsIgnoreCase(DatabaseOption.MARIA.toString())) {
+				return ResponseEntity.ok(personaMapperRest.fromDomainToAdapterRestMaria(person));
+			} else {
+				return ResponseEntity.ok(personaMapperRest.fromDomainToAdapterRestMongo(person));
+			}
 		} catch (InvalidOptionException e) {
 			log.warn(e.getMessage());
 		}
@@ -95,9 +103,13 @@ public class PersonaInputAdapterRest {
 
 	public ResponseEntity<?> actualizarPersona(String database, int cc, PersonaRequest request) throws NoExistException {
 		try {
-			setPersonOutputPortInjection(database);
+			String dbOption = setPersonOutputPortInjection(database);
 			Person person = personInputPort.edit(cc, personaMapperRest.fromAdapterToDomain(request));
-			return ResponseEntity.ok(personaMapperRest.fromDomainToAdapterRestMaria(person));
+			if (dbOption.equalsIgnoreCase(DatabaseOption.MARIA.toString())) {
+				return ResponseEntity.ok(personaMapperRest.fromDomainToAdapterRestMaria(person));
+			} else {
+				return ResponseEntity.ok(personaMapperRest.fromDomainToAdapterRestMongo(person));
+			}
 		} catch (InvalidOptionException e) {
 			log.warn(e.getMessage());
 		} catch (NoExistException e) {

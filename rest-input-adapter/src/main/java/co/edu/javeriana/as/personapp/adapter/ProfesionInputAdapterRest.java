@@ -72,9 +72,13 @@ public class ProfesionInputAdapterRest {
 
 	public ProfesionResponse crearProfesion(ProfesionRequest request, String database) {
 		try {
-			setProfessionOutputPortInjection(database);
+			String dbOption = setProfessionOutputPortInjection(database);
 			Profession profession = professionInputPort.create(profesionMapperRest.fromAdapterToDomain(request));
-			return profesionMapperRest.fromDomainToAdapterRestMaria(profession);
+			if (dbOption.equalsIgnoreCase(DatabaseOption.MARIA.toString())) {
+				return profesionMapperRest.fromDomainToAdapterRestMaria(profession);
+			} else {
+				return profesionMapperRest.fromDomainToAdapterRestMongo(profession);
+			}
 		} catch (InvalidOptionException e) {
 			log.warn(e.getMessage());
 		}
@@ -83,9 +87,13 @@ public class ProfesionInputAdapterRest {
 
 	public ResponseEntity<?> obtenerProfesion(String database, int id) throws NoExistException {
 		try {
-			setProfessionOutputPortInjection(database);
+			String dbOption = setProfessionOutputPortInjection(database);
 			Profession profession = professionInputPort.findOne(id);
-			return ResponseEntity.ok(profesionMapperRest.fromDomainToAdapterRestMaria(profession));
+			if (dbOption.equalsIgnoreCase(DatabaseOption.MARIA.toString())) {
+				return ResponseEntity.ok(profesionMapperRest.fromDomainToAdapterRestMaria(profession));
+			} else {
+				return ResponseEntity.ok(profesionMapperRest.fromDomainToAdapterRestMongo(profession));
+			}
 		} catch (InvalidOptionException e) {
 			log.warn(e.getMessage());
 		}
@@ -94,9 +102,13 @@ public class ProfesionInputAdapterRest {
 
 	public ResponseEntity<?> actualizarProfesion(String database, int id, ProfesionRequest request) throws NoExistException {
 		try {
-			setProfessionOutputPortInjection(database);
+			String dbOption = setProfessionOutputPortInjection(database);
 			Profession profession = professionInputPort.edit(id, profesionMapperRest.fromAdapterToDomain(request));
-			return ResponseEntity.ok(profesionMapperRest.fromDomainToAdapterRestMaria(profession));
+			if (dbOption.equalsIgnoreCase(DatabaseOption.MARIA.toString())) {
+				return ResponseEntity.ok(profesionMapperRest.fromDomainToAdapterRestMaria(profession));
+			} else {
+				return ResponseEntity.ok(profesionMapperRest.fromDomainToAdapterRestMongo(profession));
+			}
 		} catch (InvalidOptionException e) {
 			log.warn(e.getMessage());
 		} catch (NoExistException e) {
